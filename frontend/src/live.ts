@@ -22,7 +22,9 @@ export function useLiveUpdate(namespace: string, event: string, enabled: boolean
     })
     socket.on(event, handleEvent)
     const reconcile = () => {
-      if (document.visibilityState === 'visible') currentRefresh()
+      if (document.visibilityState !== 'visible') return
+      currentRefresh()
+      if (!socket.connected && !socket.active) socket.connect()
     }
     const poll = window.setInterval(reconcile, 15_000)
     document.addEventListener('visibilitychange', reconcile)

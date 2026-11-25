@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "test": "node --test tests/*.test.ts",
     "test:browser": "npm run build && playwright test",
+    "test:render": "npm run build && node --test tests/render-production.ts",
     "db:init": "node backend/src/db-cli.ts init",
     "db:seed": "node backend/src/db-cli.ts seed",
     "db:demo": "node backend/src/demo-database.ts"

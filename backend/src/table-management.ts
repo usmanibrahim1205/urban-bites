@@ -1,6 +1,6 @@
 import express from 'express'
 import type { DatabaseSync } from 'node:sqlite'
-import { port } from './config.ts'
+import { config, port } from './config.ts'
 import { HttpError } from './http-error.ts'
 import { restaurant } from './restaurant.ts'
 import type { Sessions } from './sessions.ts'
@@ -26,7 +26,7 @@ export function tableManagement(db: DatabaseSync, sessions: Sessions) {
   }
 
   router.get('/', (_request, response) => {
-    const defaultBase = qrOriginSettings(validated(process.env.QR_BASE_URL ?? 'http://localhost:' + port('FRONTEND_PORT', 5173)))
+    const defaultBase = qrOriginSettings(validated(config.publicOrigin ?? process.env.QR_BASE_URL ?? 'http://localhost:' + port('FRONTEND_PORT', 5173)))
     const current = new Map(sessions.overview().sessions.map(session => [session.tableNumber, session]))
     const tables = counts.all().map(row => {
       const active = current.get(row.number)

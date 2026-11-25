@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import type { Request } from 'express'
 import { HttpError } from './http-error.ts'
+import { config } from './config.ts'
 
 export const digest = (value: string) => createHash('sha256').update(value).digest('hex')
 
@@ -11,11 +12,15 @@ export function cookieValue(header: string | undefined, name: string) {
 }
 
 export function sameOrigin(origin: string | undefined, host: string | undefined, site?: string) {
-  return site !== 'cross-site' && (!origin || origin === 'http://' + host || origin === 'https://' + host)
+  if (site === 'cross-site') return false
+  if (config.render) return origin === undefined || origin === config.publicOrigin
+  return !origin || origin === 'http://' + host || origin === 'https://' + host
 }
 
 export function requireSameOrigin(request: Request) {
-  if (!sameOrigin(request.get('origin'), request.get('host'), request.get('sec-fetch-site'))) {
+  const origin = request.get('origin')
+  const originRequired = config.render && !['GET', 'HEAD', 'OPTIONS'].includes(request.method)
+  if ((originRequired && !origin) || !sameOrigin(origin, request.get('host'), request.get('sec-fetch-site'))) {
     throw new HttpError(403, 'INVALID_ORIGIN', 'Open this page directly and try again.')
   }
 }

@@ -17,6 +17,7 @@ import { sameOrigin } from './security.ts'
 import { kitchenRoutes } from './kitchen.ts'
 import { tableManagement } from './table-management.ts'
 import type { KitchenChange } from './kitchen.ts'
+import { config } from './config.ts'
 
 const handleError: ErrorRequestHandler = (error, _request, response, next) => {
   if (response.headersSent) return next(error)
@@ -43,9 +44,17 @@ const handleError: ErrorRequestHandler = (error, _request, response, next) => {
 export function createApplication(db: DatabaseSync, frontendDist?: string, staffCredential = process.env.STAFF_CREDENTIAL) {
   const app = express()
   app.disable('x-powered-by')
+  if (config.render) app.set('trust proxy', 1)
   const api = express.Router()
   const server = createServer(app)
-  const io = new Server(server, { serveClient: false })
+  const io = new Server(server, {
+    serveClient: false,
+    allowRequest: config.render ? (request, callback) => {
+      const { origin, host } = request.headers
+      callback(null, sameOrigin(origin, host, request.headers['sec-fetch-site']?.toString()) &&
+        (request.headers.upgrade?.toLowerCase() !== 'websocket' || origin === config.publicOrigin))
+    } : undefined,
+  })
   const staffRoom = 'staff:order-requests'
   const staffSocketRoom = (hash: string) => 'staff-session:' + hash
   const browserRoom = (hash: string) => 'browser:' + hash

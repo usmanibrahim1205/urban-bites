@@ -1,5 +1,7 @@
 # QR Restaurant Ordering · Final local demo
 
+For the prepared Render Free branch, see [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md). The local workflow below remains available.
+
 This local proof of concept uses Urban Bites as its demo restaurant. The launcher opens public table menus and authenticated staff workspaces for cashier operations, kitchen tickets, and table management with printable QR signs.
 
 | Route | Audience and workflow |

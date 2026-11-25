@@ -10,3 +10,8 @@ data/
 *.tsbuildinfo
 test-results/
 playwright-report/
+*.log
+.dev.vars
+.dev.vars.*
+*.pem
+*.key

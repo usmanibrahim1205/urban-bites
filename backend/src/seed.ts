@@ -30,7 +30,7 @@ const menu = [
   ]],
 ] as const
 
-export function seedDemo(db: DatabaseSync) {
+export function seedDemo(db: DatabaseSync, permanentIdentifiers?: ReadonlyMap<string, string>) {
   const insertTable = db.prepare(`
     INSERT INTO restaurant_tables (number, public_code) VALUES (?, ?)
     ON CONFLICT(number) DO NOTHING
@@ -46,8 +46,17 @@ export function seedDemo(db: DatabaseSync) {
   `)
 
   transaction(db, () => {
+    const tableCode = db.prepare('SELECT public_code FROM restaurant_tables WHERE number = ?')
     for (let number = 1; number <= 10; number++) {
-      insertTable.run(String(number).padStart(2, '0'), randomBytes(16).toString('hex'))
+      const label = String(number).padStart(2, '0')
+      const code = permanentIdentifiers?.get(label)
+      if (permanentIdentifiers && (!code || !/^[0-9a-f]{32}$/.test(code))) {
+        throw new Error('Hosted table identifiers are incomplete or invalid.')
+      }
+      insertTable.run(label, code ?? randomBytes(16).toString('hex'))
+      if (code && tableCode.get(label)?.public_code !== code) {
+        throw new Error('Hosted database table identifier does not match the manifest.')
+      }
     }
     menu.forEach(([categorySlug, categoryName, items], categoryPosition) => {
       insertCategory.run(categorySlug, categoryName, categoryPosition)

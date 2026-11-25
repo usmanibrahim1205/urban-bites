@@ -45,7 +45,7 @@ export function createStaffAuth(db: DatabaseSync, credential: string | undefined
   router.post('/login', express.json({ limit: '2kb' }), (request, response) => {
     if (!configured) throw new HttpError(503, 'STAFF_UNCONFIGURED', 'Staff sign-in needs to be configured on this server.')
     const now = Date.now()
-    const ip = request.socket.remoteAddress ?? 'unknown'
+    const ip = request.ip ?? request.socket.remoteAddress ?? 'unknown'
     for (const [key, value] of attempts) if (value.until <= now) attempts.delete(key)
     const attempt = attempts.get(ip)
     if (attempt && attempt.failures >= 5) {
