@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply min-h-screen bg-stone-50 text-stone-900 antialiased;
+  }
+
+  a {
+    @apply text-orange-800 underline underline-offset-4 hover:text-orange-950 focus-visible:outline-2 focus-visible:outline-offset-4;
+  }
+}
+
+@layer components {
+  .table-link {
+    @apply block border border-stone-300 px-3 py-2.5 text-center font-medium no-underline hover:border-orange-800 hover:bg-orange-50;
+  }
+}
