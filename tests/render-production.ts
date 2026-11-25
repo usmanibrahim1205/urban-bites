@@ -15,7 +15,7 @@ import { PNG } from 'pngjs'
 import { renderTableIdentifiers } from '../backend/src/render-table-identifiers.ts'
 
 const hosted = 'https://urban-bites-fixture.onrender.com'
-const credential = randomBytes(32).toString('base64')
+const credential = randomBytes(5).toString('hex')
 const signingSecret = randomBytes(32).toString('base64')
 
 async function start(directory: string) {

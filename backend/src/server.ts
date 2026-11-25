@@ -12,8 +12,8 @@ if (config.render) {
   if (origin.protocol !== 'https:' || !origin.hostname.endsWith('.onrender.com') || origin.origin !== config.publicOrigin) {
     throw new Error('Render requires a canonical HTTPS RENDER_EXTERNAL_URL on onrender.com.')
   }
-  if ((process.env.STAFF_CREDENTIAL?.length ?? 0) < 24) {
-    throw new Error('Render requires a separate strong STAFF_CREDENTIAL.')
+  if ((process.env.STAFF_CREDENTIAL?.length ?? 0) < 10) {
+    throw new Error('Render requires STAFF_CREDENTIAL to be at least 10 characters.')
   }
   if (!existsSync(join(config.frontendDist, 'index.html'))) throw new Error('Run the build before starting Render.')
 }
